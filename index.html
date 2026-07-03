@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>জ্ঞান আখড়া — কুইজ চ্যালেঞ্জ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F0B22;
+    --panel:#1B1035;
+    --panel-2:#241548;
+    --line: rgba(245,240,255,0.10);
+    --paper:#F5F0FF;
+    --paper-dim: rgba(245,240,255,0.62);
+    --teal:#00D9C0;
+    --teal-dim: rgba(0,217,192,0.16);
+    --gold:#FFB627;
+    --coral:#FF5D5D;
+    --radius: 22px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 8%, rgba(0,217,192,0.12), transparent 45%),
+      radial-gradient(circle at 90% 85%, rgba(255,182,39,0.10), transparent 40%),
+      var(--ink);
+    color:var(--paper);
+    font-family:'Hind Siliguri', sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+  }
+  .display{font-family:'Baloo Da 2', sans-serif;}
+
+  .app{
+    width:100%;
+    max-width:430px;
+    min-height:760px;
+    background:linear-gradient(180deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line);
+    border-radius:32px;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,0.45);
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- top bar (streak) ---------- */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:18px 22px 0 22px;
+    font-size:13px;
+    color:var(--paper-dim);
+  }
+  .streak{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:var(--teal-dim);
+    color:var(--teal);
+    padding:6px 12px;
+    border-radius:999px;
+    font-weight:600;
+    font-size:12px;
+  }
+
+  /* ---------- screens ---------- */
+  .screen{
+    flex:1;
+    display:none;
+    flex-direction:column;
+    padding:28px 26px 30px 26px;
+  }
+  .screen.active{display:flex;}
+
+  /* ---------- LANDING ---------- */
+  #landing{justify-content:space-between;}
+  .brand-eyebrow{
+    font-size:12px;
+    letter-spacing:0.14em;
+    color:var(--gold);
+    font-weight:600;
+    text-transform:uppercase;
+  }
+  .landing-hero{margin-top:18px;}
+  .landing-title{
+    font-size:44px;
+    line-height:1.12;
+    font-weight:700;
+    margin:10px 0 14px 0;
+  }
+  .landing-title span{color:var(--teal);}
+  .landing-sub{
+    color:var(--paper-dim);
+    font-size:15.5px;
+    line-height:1.6;
+    max-width:320px;
+  }
+
+  .ring-decor{
+    align-self:center;
+    margin:26px 0;
+    width:190px;height:190px;
+    position:relative;
+  }
+  .ring-decor svg{width:100%;height:100%;}
+  .ring-decor .center-txt{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    flex-direction:column;
+  }
+  .ring-decor .center-txt b{font-size:34px;font-family:'Baloo Da 2';}
+  .ring-decor .center-txt small{color:var(--paper-dim);font-size:12px;}
+
+  .cta-btn{
+    width:100%;
+    padding:19px;
+    border-radius:18px;
+    border:none;
+    background:linear-gradient(135deg, var(--teal), #00B7A6);
+    color:#04231F;
+    font-family:'Baloo Da 2';
+    font-size:19px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 14px 30px rgba(0,217,192,0.28);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .cta-btn:active{transform:translateY(2px) scale(0.99);box-shadow:0 6px 16px rgba(0,217,192,0.22);}
+  .landing-hint{
+    text-align:center;
+    color:var(--paper-dim);
+    font-size:12.5px;
+    margin-top:12px;
+  }
+
+  /* ---------- QUIZ ---------- */
+  #quiz{gap:0;}
+  .quiz-head{display:flex;flex-direction:column;gap:10px;}
+  .quiz-meta{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:12.5px;color:var(--paper-dim);font-weight:600;
+  }
+  .progress-track{
+    width:100%;height:8px;border-radius:999px;
+    background:rgba(245,240,255,0.10);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;border-radius:999px;
+    background:linear-gradient(90deg, var(--teal), var(--gold));
+    width:0%;
+    transition:width .35s ease;
+  }
+
+  .timer-wrap{
+    align-self:center;
+    width:96px;height:96px;
+    position:relative;
+    margin:22px 0 8px 0;
+  }
+  .timer-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}
+  .timer-wrap circle{fill:none;stroke-width:7;}
+  .timer-bg{stroke:rgba(245,240,255,0.10);}
+  .timer-fg{
+    stroke:var(--teal);
+    stroke-linecap:round;
+    stroke-dasharray:264;
+    stroke-dashoffset:0;
+    transition:stroke-dashoffset 1s linear, stroke .25s ease;
+  }
+  .timer-num{
+    position:absolute;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Baloo Da 2';font-size:30px;font-weight:700;
+  }
+  .timer-wrap.urgent .timer-fg{stroke:var(--coral);}
+  .timer-wrap.urgent .timer-num{color:var(--coral);}
+
+  .question-box{
+    margin-top:14px;
+    text-align:center;
+    min-height:96px;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .question-box h2{
+    font-family:'Baloo Da 2';
+    font-size:22px;
+    line-height:1.5;
+    font-weight:600;
+    margin:0;
+  }
+
+  .options{
+    margin-top:auto;
+    display:flex;flex-direction:column;gap:12px;
+    padding-top:18px;
+  }
+  .opt-btn{
+    text-align:right;
+    padding:16px 18px;
+    border-radius:16px;
+    border:1px solid var(--line);
+    background:rgba(245,240,255,0.04);
+    color:var(--paper);
+    font-family:'Hind Siliguri';
+    font-size:15.5px;
+    font-weight:500;
+    cursor:pointer;
+    transition: background .15s ease, border-color .15s ease, transform .1s ease;
+  }
+  .opt-btn:active{transform:scale(0.99);}
+  .opt-btn.correct{
+    background:rgba(0,217,192,0.16);
+    border-color:var(--teal);
+    color:var(--teal);
+  }
+  .opt-btn.wrong{
+    background:rgba(255,93,93,0.14);
+    border-color:var(--coral);
+    color:var(--coral);
+  }
+  .opt-btn[disabled]{cursor:default;}
+
+  /* ---------- RESULT / UNLOCK MODAL ---------- */
+  .modal-backdrop{
+    position:absolute;inset:0;
+    background:rgba(6,3,18,0.72);
+    display:none;
+    align-items:flex-end;
+    justify-content:center;
+    z-index:20;
+  }
+  .modal-backdrop.active{display:flex;}
+  .modal-card{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:26px 26px 0 0;
+    padding:30px 26px 32px 26px;
+    text-align:center;
+    animation:slideUp .3s ease;
+  }
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .modal-icon{
+    width:64px;height:64px;border-radius:999px;
+    background:var(--teal-dim);
+    display:flex;align-items:center;justify-content:center;
+    margin:0 auto 16px auto;
+    font-size:28px;
+  }
+  .modal-card h3{font-family:'Baloo Da 2';font-size:21px;margin:0 0 8px 0;}
+  .modal-card p{color:var(--paper-dim);font-size:14px;line-height:1.6;margin:0 0 22px 0;}
+  .modal-card .cta-btn{background:linear-gradient(135deg, var(--gold), #FF9A2E);color:#2B1600;box-shadow:0 14px 30px rgba(255,182,39,0.28);}
+  .modal-secondary{
+    margin-top:12px;
+    background:none;border:none;
+    color:var(--paper-dim);
+    font-size:13px;
+    text-decoration:underline;
+    cursor:pointer;
+  }
+
+  .ad-progress{
+    width:100%;height:6px;border-radius:999px;
+    background:rgba(245,240,255,0.10);
+    overflow:hidden;margin-top:18px;display:none;
+  }
+  .ad-progress-fill{height:100%;width:0%;background:var(--gold);transition:width .1s linear;}
+
+  #result{align-items:center;justify-content:center;text-align:center;}
+  #result .score-num{font-family:'Baloo Da 2';font-size:64px;color:var(--gold);margin:6px 0 0 0;}
+  #result .score-label{color:var(--paper-dim);font-size:14px;margin-bottom:26px;}
+
+  .settings-fab{
+    position:absolute;top:16px;left:16px;
+    width:34px;height:34px;border-radius:999px;
+    background:rgba(245,240,255,0.06);
+    border:1px solid var(--line);
+    color:var(--paper-dim);
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:15px;z-index:5;
+  }
+  .settings-panel{
+    position:absolute;inset:0;background:var(--panel);
+    padding:26px;display:none;flex-direction:column;gap:14px;z-index:30;
+  }
+  .settings-panel.active{display:flex;}
+  .settings-panel h3{font-family:'Baloo Da 2';margin:0 0 4px 0;}
+  .settings-panel label{font-size:13px;color:var(--paper-dim);}
+  .settings-panel input{
+    width:100%;padding:12px 14px;border-radius:12px;
+    border:1px solid var(--line);background:rgba(245,240,255,0.05);
+    color:var(--paper);font-size:14px;
+  }
+  .settings-panel .note{font-size:12px;color:var(--paper-dim);line-height:1.6;background:rgba(245,240,255,0.04);padding:12px;border-radius:12px;}
+  .close-settings{align-self:flex-end;background:none;border:none;color:var(--paper-dim);font-size:20px;cursor:pointer;}
+
+  .site-footer{
+    margin-top:16px;
+    display:flex;
+    gap:18px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .site-footer a{
+    color:var(--paper-dim);
+    font-size:12.5px;
+    text-decoration:none;
+    border-bottom:1px solid transparent;
+  }
+  .site-footer a:hover{color:var(--teal);border-bottom-color:var(--teal);}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="settings-fab" id="settingsFab">⚙</div>
+
+  <!-- SETTINGS -->
+  <div class="settings-panel" id="settingsPanel">
+    <button class="close-settings" id="closeSettings">✕</button>
+    <h3>সেটিংস</h3>
+    <div class="note">
+      প্রশ্ন তৈরির জন্য এই সাইট নিরাপদভাবে সার্ভার-সাইড Gemini API ব্যবহার করে। API key ব্রাউজারে কোথাও নেই — এটা Netlify-র environment variable-এ সুরক্ষিত আছে।
+      <br><br>
+      সার্ভার থেকে প্রশ্ন না এলে (নেটওয়ার্ক সমস্যা বা key সেট না থাকলে) সাইট স্বয়ংক্রিয়ভাবে বিল্ট-ইন বাংলা প্রশ্নব্যাংক ব্যবহার করবে, যাতে কুইজ কখনো বন্ধ না হয়।
+      <br><br>
+      AdMob রিওয়ার্ড অ্যাড শুধু নেটিভ অ্যাপ/WebView-এ কাজ করে, ব্রাউজারে নয় — তাই এখানে অ্যাড ধাপটি সিমুলেট করা হয়েছে। অ্যান্ড্রয়েড/iOS-এ প্যাক করার সময় <code>unlockNextLevel()</code> ফাংশনটি আপনার AdMob rewarded-ad কলব্যাক থেকে কল করুন।
+    </div>
+  </div>
+
+  <!-- LANDING -->
+  <div class="screen active" id="landing">
+    <div>
+      <div class="brand-eyebrow">জ্ঞান আখড়া</div>
+      <div class="landing-hero">
+        <div class="landing-title">প্রতিটি প্রশ্নে<br><span>নিজেকে যাচাই</span> করুন</div>
+        <div class="landing-sub">৫টি প্রশ্নের প্রতিটি রাউন্ডে সময় মাত্র কয়েক সেকেন্ড। দ্রুত ভাবুন, সঠিক উত্তর দিন, পরের লেভেল আনলক করুন।</div>
+      </div>
+    </div>
+
+    <div class="ring-decor">
+      <svg viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(245,240,255,0.10)" stroke-width="7"/>
+        <circle cx="50" cy="50" r="42" fill="none" stroke="url(#g1)" stroke-width="7" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="70"/>
+        <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#00D9C0"/><stop offset="100%" stop-color="#FFB627"/>
+        </linearGradient></defs>
+      </svg>
+      <div class="center-txt"><b id="levelPreview">লেভেল ১</b><small>প্রস্তুত?</small></div>
+    </div>
+
+    <div>
+      <button class="cta-btn" id="startBtn">শুরু করুন</button>
+      <div class="landing-hint">প্রতি ৫টি প্রশ্ন পর পর নতুন চ্যালেঞ্জ আনলক করুন!</div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="quiz">
+    <div class="quiz-head">
+      <div class="quiz-meta">
+        <span id="levelLabel">লেভেল ১</span>
+        <span id="qCounter">প্রশ্ন ১ / ৫</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="timer-wrap" id="timerWrap">
+      <svg viewBox="0 0 96 96">
+        <circle class="timer-bg" cx="48" cy="48" r="42"/>
+        <circle class="timer-fg" id="timerCircle" cx="48" cy="48" r="42"/>
+      </svg>
+      <div class="timer-num" id="timerNum">5</div>
+    </div>
+
+    <div class="question-box"><h2 id="questionText">লোড হচ্ছে…</h2></div>
+
+    <div class="options" id="optionsWrap"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="result">
+    <div class="brand-eyebrow">চূড়ান্ত ফলাফল</div>
+    <div class="score-num" id="finalScore">০/০</div>
+    <div class="score-label">সঠিক উত্তর</div>
+    <button class="cta-btn" id="restartBtn">আবার খেলুন</button>
+  </div>
+
+  <!-- UNLOCK MODAL -->
+  <div class="modal-backdrop" id="unlockModal">
+    <div class="modal-card">
+      <div class="modal-icon">🔒</div>
+      <h3>পরবর্তী লেভেল আনলক করুন</h3>
+      <p>এই রাউন্ডের ৫টি প্রশ্ন শেষ! একটি ছোট বিজ্ঞাপন দেখে পরবর্তী লেভেল আনলক করুন।</p>
+      <div class="ad-progress" id="adProgress"><div class="ad-progress-fill" id="adProgressFill"></div></div>
+      <button class="cta-btn" id="watchAdBtn">বিজ্ঞাপন দেখে আনলক করুন</button>
+      <button class="modal-secondary" id="skipAdBtn">ফলাফল দেখুন</button>
+    </div>
+  </div>
+</div>
+
+<div class="site-footer">
+  <a href="about.html">আমাদের সম্পর্কে</a>
+  <a href="contact.html">যোগাযোগ</a>
+  <a href="privacy.html">প্রাইভেসি পলিসি</a>
+</div>
+
+<script>
+/* ============ CONFIG ============ */
+const QUESTIONS_PER_LEVEL = 5;
+const TIMER_SECONDS = 5;
+const TIMER_CIRCUMFERENCE = 264; // 2*pi*42 ≈ 263.9
+
+/* ============ FALLBACK QUESTION BANK (Bengali) ============ */
+const FALLBACK_BANK = [
+  [ // Level 1
+    {q:"বাংলাদেশের রাজধানীর নাম কী?", opts:["ঢাকা","চট্টগ্রাম","খুলনা","রাজশাহী"], ans:0},
+    {q:"পদ্মা সেতু কোন নদীর উপর নির্মিত?", opts:["মেঘনা","যমুনা","পদ্মা","তিস্তা"], ans:2},
+    {q:"বাংলা ভাষায় স্বরবর্ণ মোট কয়টি?", opts:["১১টি","১০টি","১২টি","১৩টি"], ans:0},
+    {q:"বিশ্বের বৃহত্তম মহাসাগর কোনটি?", opts:["আটলান্টিক","ভারত মহাসাগর","প্রশান্ত মহাসাগর","আর্কটিক"], ans:2},
+    {q:"মানবদেহের সবচেয়ে বড় অঙ্গ কোনটি?", opts:["যকৃত","ত্বক","হৃদপিণ্ড","ফুসফুস"], ans:1},
+  ],
+  [ // Level 2
+    {q:"সূর্য থেকে পৃথিবীর দূরত্ব প্রায় কত?", opts:["১৫০ মিলিয়ন কিমি","৫০ মিলিয়ন কিমি","৩০০ মিলিয়ন কিমি","৭৫ মিলিয়ন কিমি"], ans:0},
+    {q:"বাংলাদেশের জাতীয় ফুল কোনটি?", opts:["গোলাপ","শাপলা","জবা","পদ্ম"], ans:1},
+    {q:"পানির রাসায়নিক সংকেত কী?", opts:["CO2","O2","H2O","NaCl"], ans:2},
+    {q:"বিশ্বের সর্বোচ্চ পর্বতশৃঙ্গের নাম কী?", opts:["কে২","এভারেস্ট","কাঞ্চনজঙ্ঘা","মাকালু"], ans:1},
+    {q:"একটি সমকোণের পরিমাণ কত ডিগ্রি?", opts:["৪৫°","৬০°","৯০°","১৮০°"], ans:2},
+  ],
+  [ // Level 3
+    {q:"বাংলাদেশ স্বাধীনতা লাভ করে কোন সালে?", opts:["১৯৪৭","১৯৫২","১৯৭১","১৯৭০"], ans:2},
+    {q:"পৃথিবীর একমাত্র প্রাকৃতিক উপগ্রহ কোনটি?", opts:["চাঁদ","মঙ্গল","শুক্র","বুধ"], ans:0},
+    {q:"মানুষের শরীরে হাড়ের সংখ্যা কত?", opts:["২০৬","১৮০","২৫০","১৫০"], ans:0},
+    {q:"বিশ্বের দীর্ঘতম নদী কোনটি?", opts:["আমাজন","নীল নদ","মিসিসিপি","গঙ্গা"], ans:1},
+    {q:"এক ডজনে কয়টি জিনিস থাকে?", opts:["১০","১২","১৪","১৬"], ans:1},
+  ],
+  [ // Level 4
+    {q:"আলোর গতি প্রায় সেকেন্ডে কত কিমি?", opts:["৩,০০,০০০ কিমি","১,০০,০০০ কিমি","৫,০০,০০০ কিমি","৭৫,০০০ কিমি"], ans:0},
+    {q:"বাংলাদেশের সবচেয়ে বড় সমুদ্রসৈকত কোনটি?", opts:["সেন্ট মার্টিন","কক্সবাজার","কুয়াকাটা","পতেঙ্গা"], ans:1},
+    {q:"পর্যায় সারণিতে মোট মৌলের সংখ্যা কত (প্রায়)?", opts:["১১৮","৯০","১০০","১৫০"], ans:0},
+    {q:"বিশ্বকাপ ফুটবল কত বছর পরপর অনুষ্ঠিত হয়?", opts:["২ বছর","৪ বছর","৩ বছর","৫ বছর"], ans:1},
+    {q:"রক্তের গ্রুপ প্রধানত কয়টি?", opts:["২টি","৪টি","৬টি","৮টি"], ans:1},
+  ],
+];
+
+/* ============ STATE ============ */
+let state = {
+  level: 0,          // index into levels
+  qIndex: 0,          // 0..QUESTIONS_PER_LEVEL-1 within current level
+  score: 0,
+  totalAnswered: 0,
+  currentLevelQuestions: [],
+  timerHandle: null,
+  timeLeft: TIMER_SECONDS,
+  locked: false,
+};
+
+/* ============ DOM ============ */
+const $ = id => document.getElementById(id);
+const screens = {landing:$('landing'), quiz:$('quiz'), result:$('result')};
+
+function showScreen(name){
+  Object.values(screens).forEach(s=>s.classList.remove('active'));
+  screens[name].classList.add('active');
+}
+
+/* ============ SETTINGS ============ */
+$('settingsFab').onclick = ()=> $('settingsPanel').classList.add('active');
+$('closeSettings').onclick = ()=> $('settingsPanel').classList.remove('active');
+
+/* ============ QUESTION SOURCING ============ */
+async function fetchGeminiQuestions(levelNum){
+  try{
+    const res = await fetch('/.netlify/functions/generate-questions', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ level: levelNum, count: QUESTIONS_PER_LEVEL })
+    });
+    if(!res.ok) return null;
+    const parsed = await res.json();
+    if(Array.isArray(parsed) && parsed.length) return parsed;
+    return null;
+  }catch(e){
+    console.warn('Gemini function call failed, falling back to local bank', e);
+    return null;
+  }
+}
+
+async function loadLevelQuestions(levelIdx){
+  const gemini = await fetchGeminiQuestions(levelIdx+1);
+  if(gemini) return gemini;
+  return FALLBACK_BANK[levelIdx % FALLBACK_BANK.length];
+}
+
+/* ============ TIMER ============ */
+function startTimer(){
+  clearInterval(state.timerHandle);
+  state.timeLeft = TIMER_SECONDS;
+  const circle = $('timerCircle');
+  const wrap = $('timerWrap');
+  wrap.classList.remove('urgent');
+  circle.style.strokeDashoffset = 0;
+  $('timerNum').textContent = state.timeLeft;
+
+  state.timerHandle = setInterval(()=>{
+    state.timeLeft -= 1;
+    const pct = state.timeLeft / TIMER_SECONDS;
+    circle.style.strokeDashoffset = TIMER_CIRCUMFERENCE * (1-pct);
+    $('timerNum').textContent = Math.max(state.timeLeft,0);
+    if(state.timeLeft <= 2) wrap.classList.add('urgent');
+    if(state.timeLeft <= 0){
+      clearInterval(state.timerHandle);
+      handleAnswer(-1); // time's up
+    }
+  },1000);
+}
+
+/* ============ QUIZ FLOW ============ */
+async function beginLevel(){
+  $('levelLabel').textContent = `লেভেল ${state.level+1}`;
+  $('levelPreview').textContent = `লেভেল ${state.level+1}`;
+  $('questionText').textContent = 'প্রশ্ন তৈরি হচ্ছে…';
+  showScreen('quiz');
+  state.currentLevelQuestions = await loadLevelQuestions(state.level);
+  state.qIndex = 0;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  state.locked = false;
+  const item = state.currentLevelQuestions[state.qIndex];
+  $('qCounter').textContent = `প্রশ্ন ${state.qIndex+1} / ${QUESTIONS_PER_LEVEL}`;
+  $('progressFill').style.width = `${(state.qIndex/QUESTIONS_PER_LEVEL)*100}%`;
+  $('questionText').textContent = item.q;
+
+  const wrap = $('optionsWrap');
+  wrap.innerHTML = '';
+  item.opts.forEach((opt, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = ()=> handleAnswer(i);
+    wrap.appendChild(btn);
+  });
+  startTimer();
+}
+
+function handleAnswer(selectedIdx){
+  if(state.locked) return;
+  state.locked = true;
+  clearInterval(state.timerHandle);
+  const item = state.currentLevelQuestions[state.qIndex];
+  const buttons = [...$('optionsWrap').children];
+  buttons.forEach((b,i)=>{
+    b.disabled = true;
+    if(i === item.ans) b.classList.add('correct');
+    else if(i === selectedIdx) b.classList.add('wrong');
+  });
+  if(selectedIdx === item.ans) state.score += 1;
+  state.totalAnswered += 1;
+
+  setTimeout(()=>{
+    state.qIndex += 1;
+    if(state.qIndex >= QUESTIONS_PER_LEVEL){
+      $('progressFill').style.width = '100%';
+      $('unlockModal').classList.add('active');
+    } else {
+      renderQuestion();
+    }
+  }, 900);
+}
+
+/* ============ AD UNLOCK (simulated) ============ */
+$('watchAdBtn').onclick = ()=>{
+  $('watchAdBtn').disabled = true;
+  $('watchAdBtn').textContent = 'বিজ্ঞাপন দেখা হচ্ছে…';
+  $('adProgress').style.display = 'block';
+  let p = 0;
+  const fill = $('adProgressFill');
+  const iv = setInterval(()=>{
+    p += 4;
+    fill.style.width = p+'%';
+    if(p>=100){
+      clearInterval(iv);
+      unlockNextLevel();
+    }
+  }, 90); // ~2.2s simulated ad
+};
+
+$('skipAdBtn').onclick = ()=>{
+  $('unlockModal').classList.remove('active');
+  showResult();
+};
+
+// Call this from your native AdMob rewarded-ad "onUserEarnedReward" callback
+// e.g. via a WebView JS bridge: window.unlockNextLevel()
+function unlockNextLevel(){
+  $('unlockModal').classList.remove('active');
+  $('watchAdBtn').disabled = false;
+  $('watchAdBtn').textContent = 'বিজ্ঞাপন দেখে আনলক করুন';
+  $('adProgress').style.display = 'none';
+  $('adProgressFill').style.width = '0%';
+  state.level += 1;
+  beginLevel();
+}
+window.unlockNextLevel = unlockNextLevel;
+
+/* ============ RESULT ============ */
+function showResult(){
+  $('finalScore').textContent = `${state.score}/${state.totalAnswered}`;
+  showScreen('result');
+}
+
+/* ============ START / RESTART ============ */
+$('startBtn').onclick = ()=>{
+  state.level = 0; state.score = 0; state.totalAnswered = 0;
+  beginLevel();
+};
+$('restartBtn').onclick = ()=> showScreen('landing');
+
+</script>
+</body>
+</html>

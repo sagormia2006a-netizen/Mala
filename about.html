@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>আমাদের সম্পর্কে — জ্ঞান আখড়া</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@600;700;800&family=Hind+Siliguri:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F0B22; --panel:#1B1035; --panel-2:#241548; --line:rgba(245,240,255,0.10);
+    --paper:#F5F0FF; --paper-dim:rgba(245,240,255,0.62); --teal:#00D9C0; --teal-dim:rgba(0,217,192,0.16);
+    --gold:#FFB627;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh; font-family:'Hind Siliguri',sans-serif; color:var(--paper);
+    background:
+      radial-gradient(circle at 15% 8%, rgba(0,217,192,0.12), transparent 45%),
+      radial-gradient(circle at 90% 85%, rgba(255,182,39,0.10), transparent 40%),
+      var(--ink);
+    display:flex; justify-content:center; padding:24px 18px;
+  }
+  .page{width:100%;max-width:640px;}
+  .eyebrow{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+  h1{font-family:'Baloo Da 2';font-size:32px;margin:10px 0 20px 0;line-height:1.25;}
+  .card{
+    background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line); border-radius:22px; padding:26px 24px; margin-bottom:16px;
+  }
+  .card h2{font-family:'Baloo Da 2';font-size:18px;margin:0 0 10px 0;color:var(--teal);}
+  .card p{font-size:15px;line-height:1.75;color:var(--paper);margin:0 0 12px 0;}
+  .card p:last-child{margin-bottom:0;}
+  .tag{
+    display:inline-block; background:var(--teal-dim); color:var(--teal);
+    font-size:12px; font-weight:600; padding:5px 12px; border-radius:999px; margin:2px 6px 2px 0;
+  }
+  .back{
+    display:inline-flex; align-items:center; gap:6px; color:var(--paper-dim); text-decoration:none;
+    font-size:13.5px; margin-bottom:22px;
+  }
+  .back:hover{color:var(--teal);}
+</style>
+</head>
+<body>
+<div class="page">
+  <a class="back" href="index.html">← কুইজে ফিরে যান</a>
+  <div class="eyebrow">জ্ঞান আখড়া সম্পর্কে</div>
+  <h1>ছোট প্রশ্ন, বড় মজা</h1>
+
+  <div class="card">
+    <h2>আমরা কী করি</h2>
+    <p>জ্ঞান আখড়া একটা বাংলা ভাষার কুইজ প্ল্যাটফর্ম, যেখানে সাধারণ জ্ঞান, বিজ্ঞান, ভূগোল আর ইতিহাসের প্রশ্ন নিয়ে খেলা যায় দ্রুতগতির টাইমার-ভিত্তিক ফরম্যাটে। প্রতিটি রাউন্ডে পাঁচটি প্রশ্ন, প্রতিটির জন্য মাত্র কয়েক সেকেন্ড — লক্ষ্য হলো দ্রুত চিন্তা করা আর নিজের জ্ঞান যাচাই করা মজার ছলে।</p>
+    <p>আমরা বিশ্বাস করি শেখা আর খেলা একসাথে চলতে পারে। তাই প্রতিটি প্রশ্ন বাছাই করা হয় এমনভাবে, যেন সহজ ভাষায় হলেও নতুন কিছু জানার সুযোগ থাকে।</p>
+  </div>
+
+  <div class="card">
+    <h2>কাদের জন্য</h2>
+    <p>স্কুল-কলেজ পড়ুয়া থেকে শুরু করে যেকোনো বয়সের মানুষ, যারা অবসর সময়ে নিজেকে একটু ঝালিয়ে নিতে চান বা বন্ধুদের সাথে জ্ঞানের প্রতিযোগিতায় নামতে চান — জ্ঞান আখড়া তাদের সবার জন্য।</p>
+    <div>
+      <span class="tag">সাধারণ জ্ঞান</span>
+      <span class="tag">বিজ্ঞান</span>
+      <span class="tag">ভূগোল</span>
+      <span class="tag">ইতিহাস</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>যোগাযোগ</h2>
+    <p>মতামত, পরামর্শ বা কোনো সমস্যার কথা জানাতে চাইলে আমাদের <a href="contact.html" style="color:var(--teal);">যোগাযোগ পেজ</a> দেখুন।</p>
+  </div>
+</div>
+</body>
+</html>
